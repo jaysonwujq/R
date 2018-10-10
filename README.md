@@ -1,2 +1,2 @@
 # R
-Some data from R scripts
+R code about the analysis of methylation data
