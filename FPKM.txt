@@ -1,0 +1,37 @@
+setwd("F:/A-wangbin/R-link-to-picture/work-directory")
+source("http://Bioconductor.org/biocLite.R"£©
+#choose mirror
+options(BioC_mirror="http://mirrors.ustc.edu.cn/bioc/")
+
+#read 
+>ros1CG<-read.table("ros1-NL-body-CG.fa",head = F,sep="")
+
+>ros1wtFPKM<-read.table("F:/A-WB/data-analysis-RNA-Methy/NB-LRR-expression/count-FPKM/NL-FPKM/ros1-wt-NL-FPKM.fa",head = F,sep="")
+
+>ros1FPKM<-read.table("F:/A-WB/data-analysis-RNA-Methy/NB-LRR-expression/count-FPKM/NL-FPKM/ros1-NL-FPKM.fa",head = F,sep="")
+#sort 
+>ros1wtFPKM1<-ros1wtFPKM[order(ros1wtFPKM$V1),]   
+>ros1FPKM1<-ros1FPKM[order(ros1FPKM$V1),]
+#merge
+names(ros1CG)<-c("id","start","end","wtme","mutme")
+names(ros1wtFPKM1)<-c("id","wtfpkm")
+names(ros1FPKM1)<-c("id","fpkm")
+x1<-merge(ros1CG,ros1wtFPKM1)
+ros1CF<-merge(x1,ros1FPKM1)
+#caiculate FPKM of WT
+>a<-mean(ros1CF[ros1CF$wtme==0,]$wtfpkm)
+>b<-mean(ros1CF[ros1CF$wtme>0 & ros1CF$wtme <0.01,]$wtfpkm)
+>c<-mean(ros1CF[ros1CF$wtme>=0.01 & ros1CF$wtme <0.1,]$wtfpkm)
+>d<-mean(ros1CF[ros1CF$wtme>=0.1,]$wtfpkm)
+#mutant
+>e<-mean(ros1CF[ros1CF$mutme==0,]$fpkm)
+>f<-mean(ros1CF[ros1CF$mutme>0 & ros1CF$mutme <0.01,]$fpkm)
+>g<-mean(ros1CF[ros1CF$mutme>=0.01 & ros1CF$mutme <0.1,]$fpkm)
+>h<-mean(ros1CF[ros1CF$mutme>=0.1,]$fpkm)
+#merge
+#method 1
+>y<-cbind(c(a,b,c,d),c(e,f,g,h))
+#method 2
+>y<-matrix(c(a,b,c,d,e,f,g,h),ncol=2)
+#output
+>print(y)
