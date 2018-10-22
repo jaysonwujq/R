@@ -1,0 +1,86 @@
+source("http://Bioconductor.org/biocLite.R")
+options(BioC_mirror="http://mirrors.ustc.edu.cn/bioc/")
+biocLite("edgeR")
+#load library
+library(edgeR)
+#prepare example
+control_1 <- rep(10,50)
+control_2 <- rep(10,50)
+patient_1 <- c(rep(20,25),rep(0,25));patient_2 <- c(rep(20,25),rep(0,25))
+
+df <- data.frame(c1=control_1,
+				 c2=control_2,
+				 p1=patient_1,
+				 p2=patient_2)
+				 
+head()
+tail()
+colSums()
+#create group vector
+group <- c('control','control','patient','patient')
+#create DGEList object
+d<-DGEList(counts=df,group=group)
+
+d2 <- estimateCommonDisp(d)
+#perform the DE test
+de <- exactTest(d2)
+#how many differentially expressed transcripts?
+table(p.adjust(de$table$PValue, method="BH")<0.05)
+
+TMM <- calcNormFactors(d, method="TMM")
+TMM <- estimateCommonDisp(TMM)
+TMM <- exactTest(TMM)
+table(p.adjust(TMM$table$PValue, method="BH")<0.05)
+
+RLE <- calcNormFactors(d, method="RLE")   
+RLE <- estimateCommonDisp(RLE)
+RLE <- exactTest(RLE)
+table(p.adjust(RLE$table$PValue, method="BH")<0.05)
+ 
+uq <- calcNormFactors(d, method="uq")
+uq <- estimateCommonDisp(uq)
+uq <- exactTest(uq)
+table(p.adjust(uq$table$PValue, method="BH")<0.05)
+
+#test
+my_url <-"https://davetang.org/file/pnas_expression.txt"
+data <- read.table(my_url,header = TRUE,sep = "\t")
+head(data)
+dim(data)
+
+rownames(data) <- data[,1]
+d1<-data[,c(-1,-9)]
+group <- c(rep("Control",4),rep("DHT",3))
+d1 <- DGEList(counts=d1,group = group)
+
+no_norm <- estimateCommonDisp(d1)
+no_norm <- exactTest(no_norm)
+table(p.adjust(no_norm$table$PValue,method = "BH")<0.05)
+
+TMM <- calcNormFactors(d1,method = "TMM")
+TMM <- estimateCommonDisp(TMM)
+TMM <- exactTest(TMM)
+table(p.adjust(TMM$table$PValue,method = "BH")<0.05)
+
+RLE <- calcNormFactors(d1,method = "RLE")
+RLE <- estimateCommonDisp(RLE)
+RLE <- exactTest(RLE)
+table(p.adjust(RLE$table$PValue,method="BH")<0.05)
+
+uq <- calcNormFactors(d1,method = "upperquartile")
+uq <- estimateCommonDisp(uq)
+uq <- exactTest(uq)
+table(p.adjust(uq$table$PValue,method = "BH")<0.05)
+ 
+install.packages("gplots")
+library(gplots)
+
+get_de <- function(x,pvalue){my_i <- p.adjust(x$PValue,method = "BH")<pvalue;row.names(x)[my_i]}
+my_de_no_norm <- get_de(no_norm$table, 0.05)
+my_de_tmm <- get_de(TMM$table, 0.05)
+my_de_rle <- get_de(RLE$table, 0.05)
+my_de_uq <- get_de(uq$table, 0.05)
+
+gplots::venn(list(no_norm = my_de_no_norm, TMM = my_de_tmm, RLE = my_de_rle, UQ = my_de_uq))
+gplots::venn(list(TMM = my_de_tmm, RLE = my_de_rle, UQ = my_de_uq))
+
