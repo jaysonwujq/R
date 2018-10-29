@@ -1,0 +1,25 @@
+
+setwd("F:/A-WB/data-analysis-RNA-Methy/SJE-methylation/SA")
+
+sarosCG<-read.table("ros1-sa-methy-CG",head = F,sep="")
+sarosCHG<-read.table("ros1-sa-methy-CHG",head = F,sep="")
+sarosCHH<-read.table("ros1-sa-methy-CHH",head = F,sep="")
+#去除2,3列位点信息
+sarosCG<-sarosCG[,-c(2,3)]
+sarosCHG<-sarosCHG[,-c(2,3)]
+sarosCHH<-sarosCHH[,-c(2,3)]
+#合并
+saros <- merge(sarosCG,sarosCHG,by="V1")
+saros <- merge(saros,sarosCHH,by="V1")
+#设置名字
+names(saros)[1:7]<-c("id","wtCG","rosCG","wtCHG","rosCHG","wtCHH","rosCHH")
+#调换顺序
+saros1 <- saros[,c("id","wtCG","wtCHG","wtCHH","rosCG","rosCHG","rosCHH")]
+#将id行作为rownames,并删除id行
+rnames=saros1$id
+rownames(saros1)=rnames
+saros1<-saros1[,-1]
+#数据*100(%)
+saros1<-saros1*100
+
+write.table(saros1,file = "SA-ros-GB-methy",sep = "\t",quote = F)
