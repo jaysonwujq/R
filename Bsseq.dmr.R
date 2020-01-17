@@ -18,7 +18,6 @@ ids=c(g1,g2)
 
 for (i in 1:22){
   chrom<-paste0('chr',i)
-  
   Type <-c(rep(c("Case"),g1_size),rep(c("Ctrl"),g2_size))
   Pair <-c(paste("Pair",1:g1_size,sep=""),paste("Pair",1:g2_size,sep=""))
   
