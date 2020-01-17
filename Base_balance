@@ -1,0 +1,45 @@
+#plot base balance
+library(ggplot2)
+
+args <- commandArgs(TRUE)
+sample_title <- c(args[1])
+
+p7_raw<-read.csv("p7_out.csv",header = T,sep = ",", stringsAsFactors = FALSE)
+p5_raw<-read.csv("p5_out.csv",header = T,sep = ",", stringsAsFactors = FALSE)
+p7<-t(p7_raw)
+p5<-t(p5_raw)
+row.names(p5)<-c(paste('X',dim(p7_raw)[2]:(dim(p7_raw)[2]*2-1),sep = ''))
+
+ATCG <- data.frame(rbind(p7,p5))
+colnames(ATCG) <-c('A','T','C','G')
+
+ATCG$sampleC <-rep('C',dim(ATCG)[1])
+ATCG$sampleG <-rep('G',dim(ATCG)[1])
+ATCG$sampleT <-rep('T',dim(ATCG)[1])
+ATCG$sampleA <-rep('A',dim(ATCG)[1])
+
+dfC<-data.frame(ATCG$C,ATCG$sampleC)
+colnames(dfC) <-c('Content','Base')
+dfG<-data.frame(ATCG$G,ATCG$sampleG)
+colnames(dfG) <-c('Content','Base')
+dfT<-data.frame(ATCG$T,ATCG$sampleT)
+colnames(dfT) <-c('Content','Base')
+dfA<-data.frame(ATCG$A,ATCG$sampleA)
+colnames(dfA) <-c('Content','Base')
+
+df <-rbind(dfC,dfG,dfT,dfA)
+index_length <- dim(p5_raw)[2] + dim(p7_raw)[2]
+df$Site <-rep(1:index_length,4)
+df$Base <- factor(df$Base,levels=c('A','T','C','G'))
+df$type <- rep(1:2,times=c(dim(p7_raw)[2],dim(p5_raw)[2]))
+df$type <- factor(df$type,levels=c(1,2))
+
+p<-ggplot(df, aes(x=Site, y=Content,color=Base,shape=type))+
+  geom_line()+
+  ylim(0.0,1.0)+
+  theme_classic()+
+  labs(x="",y="",title = sample_title )+
+  theme(
+    plot.title = element_text(hjust = 0.5)
+  )
+ggsave(p,filename = "base_balance.png",height = 6,width = 8)
