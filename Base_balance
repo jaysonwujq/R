@@ -1,4 +1,5 @@
 #plot base balance
+#作图-碱基的平衡性
 library(ggplot2)
 
 args <- commandArgs(TRUE)
