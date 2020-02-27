@@ -1,0 +1,35 @@
+
+library(ggplot2)
+library(RColorBrewer)
+#Rscript heatmap.R sample
+args <- commandArgs(TRUE)
+sample_title <- c(args[1])
+#构造数据
+colors<-brewer.pal(6,"OrRd")
+R_rate<-read.csv(paste0(sample_title,"_R1.csv"),header = F,sep = ",", stringsAsFactors = FALSE)
+R_rate$V8 <- c(rep(c(rep(101:112),rep(201:212),rep(301:312)),6))
+R_rate$V6 <- factor(R_rate$V6,levels = c(11,12,13,21,22,23))
+R_rate$V8 <- factor(R_rate$V8,levels = c(rep(101:112),rep(201:212),rep(301:312)))
+R_rate$V1 <-c(paste0("L00",R_rate$V1))
+R_rate$V1 <- factor(R_rate$V1,levels = c("L001","L002","L003","L004"))
+colnames(R_rate)[5] <- 'Dup_Ratio'
+
+#作图
+p<-ggplot(R_rate, aes(x=V6, y=V8,fill=Dup_Ratio)) +
+  geom_tile(aes(fill = Dup_Ratio),color = "white")+
+  labs(x="",y="",title ='')+
+  facet_grid(.~V1)+
+  #scale_fill_continuous(low="#FDD49E", high="#E34A33", space='#FC8D59',limits = c(0,80))+
+  scale_fill_gradientn(colours = c("#3182BD", "white", "#E34A33"),limits = c(0,80),breaks = c(0,40,80))+
+  geom_text(size = 3,aes(label = Dup_Ratio),nudge_y = 0)+
+  theme(
+    legend.title=element_text(size=10),
+    strip.text.x = element_text(size = 12),
+    #axis.title.x=element_blank(),
+    axis.text.y=element_blank(),
+    axis.ticks.y=element_blank(),
+    axis.text.x=element_blank(),
+    axis.ticks.x=element_blank(),
+    strip.background =element_rect(fill = "white")
+  )
+ggsave(p,filename = paste0(sample_title,".png"),height = 8,width = 8)
