@@ -32,7 +32,7 @@ col = c("missense_variant"="#008000",
 
 h_size=1
 w_size=2
-###############################This fun
+###############################This alter_fun is complex and low
 alter_fun = list(
   background = function(x, y, w, h) {
     grid.rect(x, y, w-unit(w_size, "pt"), h-unit(h_size, "pt"), 
@@ -115,7 +115,7 @@ alter_fun = list(
   }
   
 )
-
+##########################################################
 variant_list <-c("missense_variant",
                  "stop_gained",
                  "frameshift_variant",
