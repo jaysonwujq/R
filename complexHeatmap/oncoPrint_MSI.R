@@ -227,3 +227,12 @@ p <- oncoPrint(mat,
                )
 
 draw(p,heatmap_legend_side = "bottom")
+
+#添加bar 图上的标签，该函数只能在原图上叠加，类似图层
+decorate_annotation("cbar", { # the column name has the name "cbar"
+  grid.text("Mutations,\nn/Samples", x = unit(-6, "mm"), 
+            rot = 90, just = "bottom",
+            gp=gpar(col="black", fontsize=8,fontface="bold"))
+})
+
+
