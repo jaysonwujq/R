@@ -235,4 +235,8 @@ decorate_annotation("cbar", { # the column name has the name "cbar"
             gp=gpar(col="black", fontsize=8,fontface="bold"))
 })
 
-
+decorate_annotation("rbar", { # the column name has the name "cbar"
+  grid.text("Mutations,\nn/Genes",y = unit(18.5, "cm"),
+            just = "bottom",
+            gp=gpar(col="black"))
+})
