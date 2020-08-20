@@ -134,7 +134,7 @@ variant_list <-c("missense_variant",
                  "start_lost",
                  "synonymous_variant",
                  "large_fragment_insertion")
-
+#设定图例以及图例title的位置
 heatmap_legend_param = list(title = "", at = variant_list, 
                             labels = variant_list,
                             nrow=3, title_position = "leftcenter")
@@ -159,7 +159,7 @@ group_label <- c(rep(c("Colorectal"),224),
                  rep(c("Esophageal"),1)
 )
 mat_groub_label <- data.frame(colnames(mat),group_label)
-
+#因子化设定顺序
 mat_groub_label$group_label <-factor(mat_groub_label$group_label,levels = c("Colorectal",
                                                                             "Lung",
                                                                             "Gastric",
@@ -178,7 +178,7 @@ mat_groub_label$group_label <-factor(mat_groub_label$group_label,levels = c("Col
                                                                             "Kidney",
                                                                             "Gallbladder",
                                                                             "Esophageal"))
-
+#设置分组底部颜色
 ha = HeatmapAnnotation(Cancer = mat_groub_label$group_label,
                        col = list(Cancer = c("Colorectal"="red",
                                             "Lung"="orange",
